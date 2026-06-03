@@ -31,6 +31,8 @@ interface OrderDetailItem {
     id: number;
     name: string;
     category: string;
+    description?: string;
+    imageUrl?: string;
   };
 }
 
@@ -120,15 +122,36 @@ export default function ProfilePage() {
       });
 
       const resData = await response.json();
+      
+      // Menggunakan alert jika console bermasalah (bisa dihapus jika tidak dibutuhkan lagi)
+      alert(
+        `--- RESPONS BACKEND PESANAN #${order.id} ---\n\n` +
+        `Status HTTP: ${response.status} (${response.statusText})\n\n` +
+        `Isi Data JSON:\n${JSON.stringify(resData, null, 2)}`
+      );
 
       if (response.ok) {
-        const actualDetails = Array.isArray(resData) ? resData : resData.data || [];
+        let actualDetails: OrderDetailItem[] = [];
+        
+        // Perbaikan ekstraksi data berdasarkan payload JSON di screenshot
+        if (resData && Array.isArray(resData.items)) {
+          actualDetails = resData.items;
+        } else if (Array.isArray(resData)) {
+          actualDetails = resData;
+        } else if (resData && Array.isArray(resData.data)) {
+          actualDetails = resData.data;
+        } else if (resData && resData.data && Array.isArray(resData.data.items)) {
+          actualDetails = resData.data.items;
+        } else if (resData && Array.isArray(resData.result)) {
+          actualDetails = resData.result;
+        }
+
         setOrderDetails(actualDetails);
       } else {
         toast.error(resData.message || "Gagal mengambil detail pesanan.");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error catch handleOpenDetail:", err);
       toast.error("Gagal menghubungi server untuk memuat detail.");
     } finally {
       setLoadingDetail(false);
@@ -226,7 +249,6 @@ export default function ProfilePage() {
         <div className="h-28 sm:h-40 bg-gradient-to-r from-[#001B54] via-[#0b2b6e] to-blue-900 relative" />
 
         <div className="px-4 sm:px-12 pb-8 sm:pb-12 relative">
-          {/* Avatar adjustment for mobile */}
           <div className="absolute -top-12 sm:auto sm:-top-16 left-4 sm:left-12">
             <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-400 via-amber-300 to-yellow-200 text-slate-900 border-4 border-white flex items-center justify-center text-2xl sm:text-4xl font-extrabold shadow-md sm:shadow-xl select-none">
               {profile?.name ? profile.name.charAt(0).toUpperCase() : "U"}

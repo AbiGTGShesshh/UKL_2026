@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import DashboardHeader from "@/components/dashboard/header";
+import { ClipboardList } from "lucide-react"; // Import ikon opsional agar UI lebih menarik
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -99,8 +100,28 @@ export default function AdminDashboardPage() {
                 platform.
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-4">
-                {/* Tempat untuk button tambahan nanti */}
+              {/* TEMPAT TOMBOL VIEW ORDER */}
+              <div className="mt-6 sm:mt-8 flex flex-wrap gap-4">
+                <button
+                  onClick={() => router.push("/dashboard/admin/order")} // Silakan sesuaikan path route target backend/page order-mu
+                  className="
+                    w-full sm:w-auto
+                    inline-flex items-center justify-center gap-2
+                    bg-slate-900
+                    hover:bg-slate-800
+                    text-white
+                    px-6 sm:px-8
+                    py-2.5 sm:py-3
+                    rounded-md
+                    text-sm sm:text-base font-medium
+                    transition
+                    shadow-md
+                    active:scale-[0.98]
+                  "
+                >
+                  <ClipboardList size={18} />
+                  View Orders
+                </button>
               </div>
             </div>
 
