@@ -8,92 +8,98 @@ import { Toaster, toast } from "sonner";
 
 export default function CheckoutPage() {
   const router = useRouter();
-
   const { items, subtotal, clearCart } = useCart();
 
   const [paymentMethod, setPaymentMethod] = useState("COD");
-
   const [agree, setAgree] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   const tax = Math.round(subtotal * 0.12);
   const total = subtotal + tax;
 
+  // 🌟 Fungsi helper untuk membaca cookie non-httpOnly di sisi Client
+  const getCookie = (name: string) => {
+    if (typeof document === "undefined") return null;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+    return null;
+  };
+
   const handleSubmit = async () => {
-  if (!agree) {
-    toast.error(
-      "Please agree to the terms and conditions first"
-    );
-    return;
-  }
-
-  if (items.length === 0) {
-    toast.error("Cart is empty");
-    return;
-  }
-
-  try {
-    setLoading(true);
-
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      toast.error("Token not found. Please login again.");
+    if (!agree) {
+      toast.error("Please agree to the terms and conditions first");
       return;
     }
 
-    const payload = {
-      items: items.map((item) => ({
-        menuId: item.id,
-        quantity: item.quantity,
-      })),
-    };
-
-    const response = await fetch(
-      "https://ukael-sama-abebeye-production.up.railway.app/order",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      }
-    );
-
-    const result = await response.json();
-
-    console.log("Status:", response.status);
-    console.log("Response:", result);
-
-    if (!response.ok) {
-      throw new Error(
-        result.message || "Failed to create order"
-      );
+    if (items.length === 0) {
+      toast.error("Cart is empty");
+      return;
     }
 
-    toast.success("Order berhasil dibuat!");
+    try {
+      setLoading(true);
+      
+      // 🌟 Ambil data role yang sudah kita set terbuka di cookie tadi
+      const rawRole = getCookie("role");
+      const role = rawRole ? rawRole.trim().toLowerCase() : null;
 
-    clearCart();
+      const payload = {
+        items: items.map((item) => ({
+          menuId: item.id,
+          quantity: item.quantity,
+        })),
+      };
 
-    // HAPUS router.push()
-    // router.push("/dashboard/customer/order-success");
-  } catch (error) {
-    console.error(error);
+      // 🌟 Kerennya httpOnly cookie: kamu tidak perlu manual ambil token & menaruhnya di header Authorization!
+      // Browser otomatis menyertakan cookie 'token' kamu di request ini asalkan berada di domain yang sama.
+      // Catatan: Jika API backend kereta api (railway) kamu beda domain, pastikan menambahkan { credentials: 'include' }
+      const response = await fetch(
+        "https://ukael-sama-abebeye-production.up.railway.app/order",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Jika backend-mu mewajibkan header "Authorization: Bearer <token>", kamu harus tetap menyimpan token cadangan di localStorage/cookie biasa untuk dibaca di sini.
+            // Namun jika API-mu membaca langsung dari Cookie HTTP-Only, line di bawah ini bisa dihapus.
+            Authorization: `Bearer ${getCookie("token") || localStorage.getItem("token")}`, 
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
-    toast.error(
-      error instanceof Error
-        ? error.message
-        : "Failed to submit order"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to create order");
+      }
+
+      toast.success("Order berhasil dibuat!");
+      clearCart();
+
+      // PENGKONDISIAN ROUTING DARI COOKIE ROLE
+      if (role === "admin") {
+        router.push("/dashboard/admin");
+      } else if (role === "customer" || role === "user") {
+        router.push("/dashboard/customer");
+      } else {
+        // Fallback aman jika role bermasalah agar tidak terlempar ke 404 /dashboard
+        router.push("/dashboard/customer");
+      }
+
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to submit order"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
+      <Toaster richColors position="top-center" />
       <DashboardHeader />
 
       <div className="min-h-screen bg-[#f7f7f7] py-12">
@@ -109,10 +115,7 @@ export default function CheckoutPage() {
                 <thead>
                   <tr className="border-b">
                     <th className="px-4 py-4 text-left uppercase">Product</th>
-
-                    <th className="px-4 py-4 text-right uppercase">
-                      Sub Total
-                    </th>
+                    <th className="px-4 py-4 text-right uppercase">Sub Total</th>
                   </tr>
                 </thead>
 
@@ -122,17 +125,14 @@ export default function CheckoutPage() {
                       <td className="px-4 py-4">
                         {item.name} x {item.quantity}
                       </td>
-
                       <td className="px-4 py-4 text-right font-medium">
-                        Rp{" "}
-                        {(item.price * item.quantity).toLocaleString("id-ID")}
+                        Rp {(item.price * item.quantity).toLocaleString("id-ID")}
                       </td>
                     </tr>
                   ))}
 
                   <tr className="border-b">
                     <td className="px-4 py-4 font-bold">Subtotal</td>
-
                     <td className="px-4 py-4 text-right font-bold text-red-600">
                       Rp {subtotal.toLocaleString("id-ID")}
                     </td>
@@ -140,7 +140,6 @@ export default function CheckoutPage() {
 
                   <tr className="border-b">
                     <td className="px-4 py-4 font-bold">PPN (12%)</td>
-
                     <td className="px-4 py-4 text-right text-red-600">
                       Rp {tax.toLocaleString("id-ID")}
                     </td>
@@ -148,7 +147,6 @@ export default function CheckoutPage() {
 
                   <tr>
                     <td className="px-4 py-4 text-lg font-bold">Total</td>
-
                     <td className="px-4 py-4 text-right text-lg font-bold text-red-600">
                       Rp {total.toLocaleString("id-ID")}
                     </td>
@@ -165,7 +163,6 @@ export default function CheckoutPage() {
                   checked={paymentMethod === "COD"}
                   onChange={() => setPaymentMethod("COD")}
                 />
-
                 <span>Cash On Delivery</span>
               </label>
 
@@ -175,7 +172,6 @@ export default function CheckoutPage() {
                   checked={paymentMethod === "TRANSFER"}
                   onChange={() => setPaymentMethod("TRANSFER")}
                 />
-
                 <span>Bank Transfer</span>
               </label>
             </div>
@@ -188,7 +184,6 @@ export default function CheckoutPage() {
                   checked={agree}
                   onChange={(e) => setAgree(e.target.checked)}
                 />
-
                 <span>
                   I have read and agree to the website terms and conditions
                 </span>
