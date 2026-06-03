@@ -4,18 +4,18 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-slate-50/50 text-slate-800 antialiased">
-      {/* HEADER */}
+      {/* HEADER - RESPONSIVE OPTIMIZED */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 transition-all">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 h-20 flex items-center justify-between">
-          <h1 className="text-2xl font-black tracking-tight text-rose-600">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-rose-600 shrink-0">
             RESTO <span className="text-slate-900">A&V</span>
           </h1>
 
-          <nav>
+          <nav className="shrink-0">
             {/* SATU-SATUNYA TOMBOL DI HALAMAN */}
             <Link
               href="/login"
-              className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2.5 rounded-full font-semibold shadow-sm hover:shadow-md transition-all duration-200 text-sm tracking-wide"
+              className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 sm:px-6 sm:py-2.5 rounded-full font-semibold shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm tracking-wide block text-center"
             >
               Login
             </Link>
@@ -57,10 +57,10 @@ export default function HomePage() {
       </section>
 
       {/* ABOUT SECTION */}
-      <section className="py-24 bg-white">
+      <section className="py-16 sm:py-24 bg-white">
         <div className="max-w-6xl mx-auto px-6 sm:px-8">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div className="relative h-[350px] sm:h-[450px] w-full rounded-2xl overflow-hidden shadow-2xl group">
+            <div className="relative h-[250px] sm:h-[380px] md:h-[450px] w-full rounded-2xl overflow-hidden shadow-2xl group">
               <Image
                 src="/nyumi.jpg"
                 alt="Hidangan Lezat Resto A&V"
@@ -78,7 +78,7 @@ export default function HomePage() {
                 Pengalaman Kuliner <br /> Yang Berbeda
               </h2>
 
-              <p className="text-slate-600 leading-relaxed pt-2">
+              <p className="text-slate-600 leading-relaxed pt-2 text-sm sm:text-base">
                 Kami menghadirkan berbagai pilihan makanan dan minuman dengan
                 kualitas terbaik. Setiap hidangan dibuat dengan bahan pilihan
                 dan disajikan dengan penuh perhatian untuk memberikan pengalaman
@@ -90,20 +90,20 @@ export default function HomePage() {
       </section>
 
       {/* FEATURES SECTION */}
-      <section className="bg-slate-50 py-24 border-t border-b border-slate-100">
+      <section className="bg-slate-50 py-16 sm:py-24 border-t border-b border-slate-100">
         <div className="max-w-6xl mx-auto px-6 sm:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
               Kenapa Memilih Kami?
             </h2>
-            <p className="mt-4 text-slate-500">
+            <p className="mt-4 text-sm sm:text-base text-slate-500">
               Alasan utama mengapa pelanggan setia kami selalu kembali untuk menikmati menu terbaik kami.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {/* Card 1 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 group">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 group">
               <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center font-bold text-xl mb-6 group-hover:bg-rose-600 group-hover:text-white transition-colors duration-300">
                 🌱
               </div>
@@ -114,7 +114,7 @@ export default function HomePage() {
             </div>
 
             {/* Card 2 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 group">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 group">
               <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center font-bold text-xl mb-6 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
                 ⚡
               </div>
@@ -125,7 +125,7 @@ export default function HomePage() {
             </div>
 
             {/* Card 3 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 group">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 group sm:col-span-2 md:col-span-1">
               <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center font-bold text-xl mb-6 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
                 💰
               </div>
@@ -139,16 +139,16 @@ export default function HomePage() {
       </section>
 
       {/* CTA SECTION */}
-      <section className="bg-gradient-to-br from-rose-600 to-rose-700 py-20 text-white relative overflow-hidden">
+      <section className="bg-gradient-to-br from-rose-600 to-rose-700 py-16 sm:py-20 text-white relative overflow-hidden">
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
         <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-black/10 rounded-full blur-2xl" />
 
         <div className="max-w-4xl mx-auto text-center px-6 sm:px-8 relative z-10">
-          <h2 className="text-3xl sm:text-4xl font-black tracking-tight leading-tight">
+          <h2 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
             Siap Memesan Makanan Favoritmu?
           </h2>
 
-          <p className="mt-4 text-rose-100 max-w-md mx-auto text-sm sm:text-base opacity-90">
+          <p className="mt-4 text-rose-100 max-w-md mx-auto text-xs sm:text-base opacity-90">
             Silakan klik tombol Login di bagian atas halaman untuk masuk ke akun Anda dan mulai memesan menu spesial kami.
           </p>
         </div>
