@@ -8,9 +8,6 @@ export async function POST(request: Request) {
   try {
     const body = await request.json()
 
-    console.log("API_URL =", API_URL)
-    console.log("LOGIN URL =", `${API_URL}/auth/login`)
-
     const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: {
