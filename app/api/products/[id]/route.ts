@@ -23,9 +23,9 @@ try {
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = Number(params.id)
+  const id = Number((await params).id)
   const found = PRODUCTS.find((p) => p.id === id)
   if (!found) return NextResponse.json({ message: "Not found" }, { status: 404 })
   return NextResponse.json({ data: found })
@@ -33,16 +33,21 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = Number(params.id)
+    const id = Number((await params).id)
     const body = await request.json()
     let updated: Product | null = null
     PRODUCTS = PRODUCTS.map((p) => {
       if (p.id === id) {
-        updated = { ...p, ...body }
-        return updated
+        const newProduct: Product = {
+      ...p,
+      ...body,
+    }
+
+    updated = newProduct
+    return newProduct
       }
       return p
     })
@@ -55,9 +60,9 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = Number(params.id)
+  const id = Number((await params).id)
   const prev = PRODUCTS.length
   PRODUCTS = PRODUCTS.filter((p) => p.id !== id)
   if (PRODUCTS.length === prev) return NextResponse.json({ message: "Not found" }, { status: 404 })
